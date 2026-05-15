@@ -1,0 +1,37 @@
+sequenceDiagram
+    participant U as User
+    participant UI as TUI Layer
+    participant App as App Core
+    participant Coord as Agent Coordinator
+    participant LLM as LLM Provider
+    participant Tool as Tool System
+    participant DB as SQLite
+
+    U->>UI: Type prompt + Enter
+    UI->>App: Submit prompt
+    App->>DB: Save user message
+    App->>Coord: Create/run agent call
+
+    loop Agent Loop
+        Coord->>LLM: Send messages (streaming)
+        LLM-->>Coord: Text delta / Tool call
+
+        alt Text Response
+            Coord-->>UI: Stream text to chat
+            UI-->>U: Display response
+        else Tool Call
+            Coord->>Tool: Execute tool
+            Tool-->>Coord: Tool result
+            Coord-->>UI: Show tool execution
+            Note over Coord,LLM: Feed result back to LLM
+        end
+
+        alt Context Window Full
+            Coord->>Coord: Auto-summarize
+            Note over Coord: Replace history with summary
+        end
+    end
+
+    Coord-->>App: Agent turn complete
+    App->>DB: Save assistant message
+    App-->>UI: Update chat view

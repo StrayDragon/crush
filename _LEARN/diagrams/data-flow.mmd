@@ -1,0 +1,48 @@
+flowchart LR
+    subgraph Input["User Input"]
+        PROMPT[Prompt Text]
+        FILES[File Attachments]
+        IMAGES[Image Attachments]
+    end
+
+    subgraph Processing["Processing Pipeline"]
+        CTX[Context Builder]
+        CTX -->|System Prompt| SYSPL[coder.md.tpl]
+        CTX -->|Conversation| HISTORY[Message History]
+        CTX -->|Working Dir| WORKDIR[Workspace Info]
+        CTX -->|Files| ATTACH[Attachment Content]
+    end
+
+    subgraph LLMCall["LLM API Call"]
+        REQ[Request Builder]
+        REQ --> STREAM[Streaming Response]
+    end
+
+    subgraph Response["Response Handling"]
+        STREAM --> TEXT[Text Deltas]
+        STREAM --> THINK[Reasoning Content]
+        STREAM --> TOOLREQ[Tool Call Requests]
+    end
+
+    subgraph Output["Output"]
+        TEXT --> RENDER[Markdown Render]
+        THINK --> COLLAPSE[Collapsible Section]
+        TOOLREQ --> EXEC[Tool Execution]
+        EXEC --> LOOP[Back to LLM]
+        RENDER --> DISPLAY[Terminal Display]
+    end
+
+    Input --> Processing --> LLMCall --> Response --> Output
+    LOOP -.-> LLMCall
+
+    classDef input fill:#e94560,stroke:#1a1a2e,color:#fff
+    classDef proc fill:#0f3460,stroke:#e94560,color:#eee
+    classDef llm fill:#533483,stroke:#e94560,color:#eee
+    classDef resp fill:#16213e,stroke:#0f3460,color:#eee
+    classDef out fill:#1a1a2e,stroke:#0f3460,color:#eee
+
+    class Input input
+    class Processing proc
+    class LLMCall llm
+    class Response resp
+    class Output out

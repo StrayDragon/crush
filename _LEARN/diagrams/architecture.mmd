@@ -1,0 +1,65 @@
+graph TB
+    subgraph CLI["CLI Layer (internal/cmd)"]
+        ROOT[root.go] --> RUN[run.go]
+        ROOT --> SESS[session.go]
+        ROOT --> DIRS[dirs.go]
+        ROOT --> MODELS[models.go]
+        ROOT --> PROJECTS[projects.go]
+        ROOT --> LOGS[logs.go]
+    end
+
+    subgraph APP["Application Layer (internal/app)"]
+        APPCORE[App Core]
+        APPCORE --> COORDINATOR[Agent Coordinator]
+        APPCORE --> CFGSRV[Config Service]
+        APPCORE --> SESSMGR[Session Manager]
+    end
+
+    subgraph AGENT["Agent Layer (internal/agent)"]
+        COORDINATOR --> CODER[Coder Agent]
+        COORDINATOR --> TASK[Task Agent]
+        COORDINATOR --> SUMMARY[Summary Agent]
+        COORDINATOR --> TITLE[Title Agent]
+    end
+
+    subgraph TOOLS["Tool Layer (internal/agent/tools)"]
+        TOOLSREG[Tool Registry]
+        TOOLSREG --> FS[File Tools<br/>view/edit/write/multiedit]
+        TOOLSREG --> SHELL[Shell Tools<br/>bash/job_output/job_kill]
+        TOOLSREG --> SEARCH[Search Tools<br/>grep/glob/ls]
+        TOOLSREG --> WEB[Web Tools<br/>fetch/web_search/download]
+        TOOLSREG --> DEV[Dev Tools<br/>diagnostics/references]
+        TOOLSREG --> MCP[MCP Tools<br/>list_resources/read_resource]
+    end
+
+    subgraph UI["TUI Layer (internal/ui)"]
+        UICORE[UI Model<br/>Bubble Tea v2]
+        UICORE --> CHAT[Chat View]
+        UICORE --> INPUT[Textarea/Input]
+        UICORE --> STATUS[Status Bar]
+        UICORE --> DIALOG[Dialog System]
+        UICORE --> COMPL[Completions]
+    end
+
+    subgraph INFRA["Infrastructure"]
+        DB[(SQLite DB<br/>internal/db)]
+        LSP[LSP Client<br/>internal/lsp]
+        HOOKS[Hook System<br/>internal/hooks]
+        EVENT[Telemetry<br/>internal/event]
+        PS[Pub/Sub<br/>internal/pubsub]
+    end
+
+    CLI --> APP
+    APP --> AGENT
+    AGENT --> TOOLS
+    APP --> UI
+    AGENT --> LSP
+    AGENT --> DB
+    APP --> HOOKS
+    APP --> EVENT
+    APP --> PS
+
+    classDef layer fill:#1a1a2e,stroke:#e94560,stroke-width:2px,color:#eee
+    classDef core fill:#16213e,stroke:#0f3460,stroke-width:2px,color:#eee
+    class CLI,APP,AGENT,TOOLS,UI,INFRA layer
+    class APPCORE,COORDINATOR,TOOLSREG,UICORE core

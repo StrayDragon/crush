@@ -1,0 +1,38 @@
+flowchart TD
+    A[LLM requests tool call] --> B{Hook: PreToolUse}
+    B -->|Deny| C[Return denied error]
+    B -->|Allow| D{Permission Check}
+    B -->|No hooks| D
+
+    D -->|Auto-approved| E[Execute Tool]
+    D -->|Needs approval| F[Show permission dialog]
+    F -->|User approves| E
+    F -->|User denies| G[Return denied error]
+
+    E --> H{Tool Type}
+    H -->|Bash| I[Execute shell command<br/>Check banned list<br/>Auto-background if long]
+    H -->|File Edit| J[Validate file state<br/>Create backup<br/>Apply edit<br/>Notify LSP]
+    H -->|File View| K[Read file<br/>Detect type<br/>Return content]
+    H -->|Grep/Glob| L[Execute search<br/>Format results]
+    H -->|MCP| M[Delegate to MCP server<br/>Parse response]
+    H -->|Web| N[HTTP request<br/>Format response]
+
+    I --> O[Format result]
+    J --> O
+    K --> O
+    L --> O
+    M --> O
+    N --> O
+
+    O --> P[Return ToolResponse]
+    P --> Q[Feed back to LLM]
+
+    classDef process fill:#0f3460,stroke:#e94560,color:#eee
+    classDef decision fill:#1a1a2e,stroke:#0f3460,color:#eee
+    classDef error fill:#533483,stroke:#e94560,color:#eee
+    classDef success fill:#16213e,stroke:#0f3460,color:#eee
+
+    class E,I,J,K,L,M,N,O,P,Q process
+    class B,D,H decision
+    class C,G error
+    class F success

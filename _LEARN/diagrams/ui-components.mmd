@@ -1,0 +1,42 @@
+graph TB
+    subgraph UILayout["UI Layout"]
+        HEADER[Header<br/>Logo + Workspace + Model + Keys]
+        CHATVIEW[Chat Viewport<br/>Message List + Scrolling]
+        EDITOR[Editor Area<br/>Textarea + Attachments]
+        STATUSBAR[Status Bar<br/>Session Info + State]
+    end
+
+    subgraph Messages["Message Types"]
+        USERMSG[User Message<br/>Text + Attachments]
+        ASSTMSG[Assistant Message<br/>Markdown + Code + Thinking]
+        TOOLMSG[Tool Message<br/>Bash / Edit / Search / MCP]
+        INFOMSG[Info Message<br/>System notifications]
+    end
+
+    subgraph Components["UI Components"]
+        COMPL[Completions<br/>File/Resource autocomplete]
+        DIALOG[Dialog<br/>Permissions / Confirmations]
+        SIDEBAR[Sidebar<br/>LSP / MCP / Skills]
+        NOTIF[Notifications<br/>Desktop alerts]
+    end
+
+    subgraph Styles["Styling System"]
+        THEME[Theme Engine<br/>Charmtone / Lipgloss]
+        MD[Markdown Renderer<br/>Glamour + Chroma]
+        GRAD[Gradients<br/>Logo + Animations]
+    end
+
+    CHATVIEW --> Messages
+    EDITOR --> COMPL
+    UILayout --> Components
+    UILayout --> Styles
+
+    classDef main fill:#1a1a2e,stroke:#e94560,stroke-width:2px,color:#eee
+    classDef msg fill:#0f3460,stroke:#16213e,color:#eee
+    classDef comp fill:#16213e,stroke:#0f3460,color:#eee
+    classDef style fill:#533483,stroke:#e94560,color:#eee
+
+    class UILayout main
+    class Messages msg
+    class Components comp
+    class Styles style
